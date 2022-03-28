@@ -1,0 +1,119 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head></head>
+<body>
+  <div style="height: 2000px; width: 2000px">
+    <ul>
+      <li>
+        <input type="radio" style="height:10px;color:red;" name="color" id="red"></input>
+      </li>
+      <li>
+        <input type="radio" name="color" id="green"></input>
+      </li>
+      <li>
+        <input type="radio" name="color" id="blue"></input>
+      </li>
+    </ul>
+    <div id="testClickDiv" style="height:40px;width:40px;position:absolute;bottom:0px;background:green">
+      <div style="height: 20px; width: 20px;background-color: yellow;">
+      </div>
+    </div>
+  </div>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<h1>Example 6</h1>
+
+  <h1>Example 6: Leaking DOM nodes</h1>
+
+  <p>If the compiler can use hidden classes, your code will execute MUCH faster and will
+  use MUCH LESS memory.</p>
+
+  <ol>
+    <li>Open Timeline tab.</li>
+
+    <li>Start recording activty.</li>
+
+    <li>Repeat the next steps and watch the Timeline
+
+      <ol>
+        <li>Create some nodes</li>
+
+        <li>GC</li>
+      </ol>
+    </li>
+  </ol>
+
+  <p><button onclick="createNodes()">Create nodes (some of them leaked)</button></p>
+
+  <script>
+  'use strict';
+
+var leakedNodes = [];
+
+function createNode(text) {
+    var div = document.createElement('div'),
+        innerDiv = document.createElement('div'),
+        buf;
+    buf = document.createTextNode(text + ' - ' + new Date().toTimeString());
+    innerDiv.appendChild(buf);
+    div.appendChild(innerDiv);
+    return div;
+}
+
+function createLeakedNodes() {
+    var i;
+    for (i = 0; i < 20; i++) {
+        leakedNodes.push(createNode('Leaked:' + i));
+    }
+}
+
+function createGCNodes() {
+    var i;
+    for (i = 0; i < 20; i++) {
+        createNode('Collected:' + i);
+    }
+}
+
+function createNodes() {
+    createLeakedNodes();
+    createGCNodes();
+}
+
+</script>
+
+  <hr>
+  <pre>
+'use strict';
+
+var leakedNodes = [];
+
+function createNode(text) {
+    var div = document.createElement("div"),
+        innerDiv = document.createElement("div");
+    innerDiv.appendChild(document.createTextNode(text + " - "+ new Date().toTimeString()));
+    div.appendChild(innerDiv);
+    return div;
+}
+
+function createLeakedNodes() {
+    var i;
+    for (i = 0; i &lt; 20; i++) {
+        leakedNodes.push(createNode("Leaked:" + i));
+    }
+}
+
+function createGCNodes() {
+    var i;
+    for (i = 0; i &lt; 20; i++) {
+        createNode("Collected:" + i);
+    }
+}
+
+function createNodes() {
+    createLeakedNodes();
+    createGCNodes();
+}
+</pre>
